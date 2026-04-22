@@ -259,6 +259,7 @@ def render_dashboard(
             <td class="pos-ticker">{symbol}</td>
             <td class="entry-date">{entry_date_display}</td>
             <td class="right num">${p['avg_entry_price']:,.2f}</td>
+            <td class="right num">${p['current_price']:,.2f}</td>
             <td class="right num">{qty_display}</td>
             <td class="right num">${p['market_value']:,.0f}</td>
             <td class="right num">{pct_of_port:.1f}%</td>
@@ -533,6 +534,19 @@ def render_dashboard(
     letter-spacing: -0.01em;
     color: #0A0A0A;
   }}
+  .methodology {{
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #FAFBFC;
+    border-left: 2px solid #5B7B9A;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.7;
+  }}
+  .methodology strong {{
+    color: #0A0A0A;
+    font-weight: 600;
+  }}
   .entry-date {{
     color: #555;
     font-size: 13px;
@@ -788,6 +802,7 @@ def render_dashboard(
           <th>Ticker</th>
           <th>Entry</th>
           <th class="right">Avg Price</th>
+          <th class="right">Last Price</th>
           <th class="right">Shares</th>
           <th class="right">Value</th>
           <th class="right">% Port.</th>
@@ -800,6 +815,11 @@ def render_dashboard(
         {pos_rows}
       </tbody>
     </table>
+    <div class="methodology">
+      <strong>Total Return</strong> = (Last Price − Avg Price) ÷ Avg Price.
+      <strong>Last Price</strong> is the most recent trade during market hours, or the official close after 4:00 PM ET.
+      <strong>1-Day</strong> is Last Price vs. prior trading day&apos;s close.
+    </div>
   </div>
 
   <!-- Trade History -->

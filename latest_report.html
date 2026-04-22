@@ -1,165 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GG Capital · April 21, 2026 · 10:44 PM PT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #ffffff;
+    color: #0A0A0A;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
 
-    <div style="max-width:640px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;">
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #EEEEEE;
+    margin-bottom: 48px;
+  }
+  .brand {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .brand-sub {
+    font-size: 13px;
+    font-weight: 400;
+    color: #888;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+  .header-meta {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
 
-        <div style="background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:24px 32px;border-radius:12px 12px 0 0;">
-            <h1 style="color:white;margin:0;font-size:20px;">AI Trading Bot — Daily Report</h1>
-            <p style="color:#94a3b8;margin:4px 0 0 0;font-size:14px;">April 21, 2026</p>
-        </div>
+  /* Sections */
+  .section {
+    margin-bottom: 64px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    color: #0A0A0A;
+  }
 
-        <div style="background:white;padding:24px 32px;border:1px solid #e2e8f0;border-top:none;">
+  /* Strategy block */
+  .strategy {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 48px;
+  }
+  .strategy-overview {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.7;
+  }
+  .strategy-goal {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #EEEEEE;
+    font-size: 13px;
+    color: #5B7B9A;
+    font-weight: 500;
+  }
+  .params {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .param-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid #F3F3F3;
+    font-size: 13px;
+  }
+  .param-row:last-child { border-bottom: none; }
+  .param-label { color: #888; }
+  .param-value {
+    color: #0A0A0A;
+    font-weight: 500;
+    font-feature-settings: 'tnum';
+  }
 
-            <div style="display:flex;gap:16px;margin-bottom:24px;">
-                <div style="flex:1;background:#f8fafc;padding:16px;border-radius:8px;text-align:center;">
-                    <div style="font-size:12px;color:#64748b;text-transform:uppercase;">Portfolio Value</div>
-                    <div style="font-size:24px;font-weight:700;color:#0f172a;">$111,288.02</div>
-                </div>
-                <div style="flex:1;background:#f8fafc;padding:16px;border-radius:8px;text-align:center;">
-                    <div style="font-size:12px;color:#64748b;text-transform:uppercase;">Total P&L</div>
-                    <div style="font-size:24px;font-weight:700;color:#22c55e;">+$11,288.18</div>
-                    <div style="font-size:14px;color:#22c55e;">(+11.3%)</div>
-                </div>
-                <div style="flex:1;background:#f8fafc;padding:16px;border-radius:8px;text-align:center;">
-                    <div style="font-size:12px;color:#64748b;text-transform:uppercase;">Cash</div>
-                    <div style="font-size:24px;font-weight:700;color:#0f172a;">$0.00</div>
-                </div>
-            </div>
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid #EEEEEE;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .stat {
+    padding: 28px 24px;
+    border-right: 1px solid #EEEEEE;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #0A0A0A;
+    letter-spacing: -0.02em;
+    font-feature-settings: 'tnum';
+  }
+  .stat-sub {
+    font-size: 12px;
+    color: #888;
+    margin-top: 6px;
+    font-feature-settings: 'tnum';
+  }
 
-            <div style="background:#f8fafc;padding:12px 16px;border-radius:8px;margin-bottom:24px;font-size:13px;display:flex;gap:24px;">
-                <span>SPY: $703.91 (-0.69%)</span>
-                <span>QQQ: $644.24 (-0.39%)</span>
-                <span>Day Trades: 0</span>
-            </div>
+  /* Benchmark comparison table */
+  .bench-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .bench-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 12px 16px;
+    border-bottom: 1px solid #EEEEEE;
+  }
+  .bench-table th.right { text-align: right; }
+  .bench-table td {
+    padding: 16px;
+    border-bottom: 1px solid #F3F3F3;
+    font-feature-settings: 'tnum';
+  }
+  .bench-table td.right { text-align: right; }
+  .bench-table tr:last-child td { border-bottom: none; }
+  .bench-name { font-weight: 600; }
+  .bench-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: #F3F3F3;
+    color: #888;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .bench-tag-us {
+    background: #5B7B9A;
+    color: #fff;
+  }
 
-            <h2 style="color:#1e293b;font-size:18px;margin-top:0;">Positions</h2>
-            <table style="width:100%;border-collapse:collapse;font-size:14px;">
-                <tr style="background:#f1f5f9;">
-                    <th style="padding:8px 12px;text-align:left;">Symbol</th>
-                    <th style="padding:8px 12px;text-align:right;">Entry</th>
-                    <th style="padding:8px 12px;text-align:right;">Current</th>
-                    <th style="padding:8px 12px;text-align:right;">Value</th>
-                    <th style="padding:8px 12px;text-align:right;">P&L</th>
-                </tr>
-                
-        <tr>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">HIMS</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$23.48</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$30.28</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$21,920.67</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#22c55e;font-weight:600;">
-                $4,921.28 (+28.9%)
-            </td>
-        </tr>
-        <tr>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">DOCN</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$79.62</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$89.62</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$22,512.24</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#22c55e;font-weight:600;">
-                $2,511.79 (+12.6%)
-            </td>
-        </tr>
-        <tr>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">LUNR</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$25.72</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$28.57</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$16,662.13</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#22c55e;font-weight:600;">
-                $1,662.13 (+11.1%)
-            </td>
-        </tr>
-        <tr>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">SNOW</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$136.69</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$151.70</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$19,976.59</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#22c55e;font-weight:600;">
-                $1,976.59 (+11.0%)
-            </td>
-        </tr>
-        <tr>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">NET</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$185.00</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$198.00</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$16,054.05</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#22c55e;font-weight:600;">
-                $1,054.05 (+7.0%)
-            </td>
-        </tr>
-        <tr>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">LCID</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$7.70</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$7.27</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$14,162.34</td>
-            <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#ef4444;font-weight:600;">
-                $-837.66 (-5.6%)
-            </td>
-        </tr>
-                <tr style="background:#f1f5f9;font-weight:700;">
-                    <td style="padding:8px 12px;">TOTAL</td>
-                    <td style="padding:8px 12px;text-align:right;">$99,999.84</td>
-                    <td style="padding:8px 12px;text-align:right;"></td>
-                    <td style="padding:8px 12px;text-align:right;">$111,288.02</td>
-                    <td style="padding:8px 12px;text-align:right;color:#22c55e;">$11,288.18 (+11.3%)</td>
-                </tr>
-            </table>
+  /* Positions table */
+  .positions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .positions-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 12px 16px;
+    border-bottom: 1px solid #EEEEEE;
+  }
+  .positions-table th.right { text-align: right; }
+  .positions-table td {
+    padding: 20px 16px;
+    border-bottom: 1px solid #F3F3F3;
+    vertical-align: top;
+    font-feature-settings: 'tnum';
+  }
+  .positions-table td.right { text-align: right; }
+  .pos-symbol-name {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .pos-symbol-desc {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    line-height: 1.5;
+    max-width: 480px;
+  }
 
-            
-        <h2 style="color:#1e293b;font-size:18px;margin-top:24px;">Trades Executed Today</h2>
-        <table style="width:100%;border-collapse:collapse;font-size:14px;">
-            <tr style="background:#f1f5f9;">
-                <th style="padding:8px 12px;text-align:left;">Symbol</th>
-                <th style="padding:8px 12px;text-align:left;">Side</th>
-                <th style="padding:8px 12px;text-align:right;">Filled Price</th>
-                <th style="padding:8px 12px;text-align:left;">Status</th>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">HIMS</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$29.36</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">LCID</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$7.7</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">NET</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$185</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">HIMS</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$21.675022</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">DOCN</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$79.618922</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">LUNR</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$25.72</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr>
-            <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">SNOW</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;color:#22c55e;font-weight:600;">BUY</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">$136.69</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #eee;">FILLED</td>
-            </tr></table>
-            
+  /* Value coloring */
+  .pos { color: #1E7A3A; }
+  .neg { color: #B33030; }
+  .neu { color: #0A0A0A; }
 
-        </div>
+  .num { font-feature-settings: 'tnum'; }
 
-        <div style="background:#f8fafc;padding:16px 32px;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:none;text-align:center;">
-            <p style="color:#94a3b8;font-size:12px;margin:0;">AI Trading Bot — Automated Report</p>
-        </div>
+  /* Trade history */
+  .trade-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid #F3F3F3;
+  }
+  .trade-row:last-child { border-bottom: none; }
+  .trade-date {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-top: 2px;
+  }
+  .trade-main { }
+  .trade-line {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .trade-side {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+  }
+  .trade-side-buy { background: #E8F0E6; color: #1E7A3A; }
+  .trade-side-sell { background: #FCE8E6; color: #B33030; }
+  .trade-symbol {
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .trade-meta {
+    font-size: 12px;
+    color: #888;
+    font-feature-settings: 'tnum';
+  }
+  .trade-desc {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  .trade-thesis {
+    font-size: 13px;
+    color: #0A0A0A;
+    padding: 10px 14px;
+    border-left: 2px solid #5B7B9A;
+    background: #FAFBFC;
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+  .empty {
+    font-size: 14px;
+    color: #888;
+    font-style: italic;
+    padding: 24px 0;
+  }
+
+  .cagr-caveat {
+    font-size: 11px;
+    color: #B88330;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 96px;
+    padding-top: 32px;
+    border-top: 1px solid #EEEEEE;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.04em;
+  }
+  .footer a {
+    color: #888;
+    text-decoration: none;
+  }
+  .footer a:hover { color: #5B7B9A; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container { padding: 32px 20px 64px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .header-meta { text-align: left; }
+    .strategy { grid-template-columns: 1fr; gap: 32px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat { border-right: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; }
+    .stat:nth-child(2n) { border-right: none; }
+    .stat:nth-last-child(-n+2) { border-bottom: none; }
+    .positions-table thead { display: none; }
+    .positions-table tr {
+      display: block;
+      padding: 16px 0;
+      border-bottom: 1px solid #F3F3F3;
+    }
+    .positions-table td {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border: none;
+      font-size: 13px;
+    }
+    .positions-table td.pos-symbol { display: block; margin-bottom: 8px; }
+    .positions-table td.right::before {
+      content: attr(data-label);
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .trade-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="brand">GG Capital</div>
+      <div class="brand-sub">An AI-managed systematic trading fund.</div>
     </div>
-    
+    <div class="header-meta">
+      Updated April 21, 2026 · 10:44 PM PT<br>
+      Inception · 2026-04-10
+    </div>
+  </div>
+
+  <!-- Strategy -->
+  <div class="section">
+    <div class="section-label">Strategy</div>
+    <div class="strategy">
+      <div class="strategy-overview">
+        GG Capital is a fully autonomous trading strategy run by an AI agent. The agent screens a curated universe of high-beta US equities, builds catalyst-driven theses, and executes trades within strict risk rails — three times per trading day.
+        <div class="strategy-goal">Target: Outperform SPY and QQQ by 10-20% annualized while keeping max drawdown under 25%.</div>
+      </div>
+      <div class="params">
+        <div class="param-row"><span class="param-label">Inception Capital</span><span class="param-value">$100,000</span></div><div class="param-row"><span class="param-label">Universe</span><span class="param-value">~155 US equities across 9 sectors</span></div><div class="param-row"><span class="param-label">Instruments</span><span class="param-value">Stocks, long calls/puts, spreads</span></div><div class="param-row"><span class="param-label">Screening</span><span class="param-value">Beta > 1.3  ·  Volume > 2M  ·  Volatility > 3%</span></div><div class="param-row"><span class="param-label">Max position</span><span class="param-value">20% of portfolio</span></div><div class="param-row"><span class="param-label">Max sector</span><span class="param-value">35% of portfolio</span></div><div class="param-row"><span class="param-label">Max options</span><span class="param-value">40% of portfolio</span></div><div class="param-row"><span class="param-label">Sell discipline</span><span class="param-value">50%+ winners or broken-thesis exits</span></div><div class="param-row"><span class="param-label">Leverage</span><span class="param-value">None — no margin, no naked options, no shorts</span></div><div class="param-row"><span class="param-label">Trade cadence</span><span class="param-value">3× daily (Mon-Fri)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Headline Stats -->
+  <div class="section">
+    <div class="section-label">Performance</div>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-label">Portfolio Value</div>
+        <div class="stat-value">$114,118</div>
+        <div class="stat-sub">$0 cash</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Return · Inception</div>
+        <div class="stat-value pos">+14.12%</div>
+        <div class="stat-sub pos">+$14,118</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">1-Day Return</div>
+        <div class="stat-value pos">+3.21%</div>
+        <div class="stat-sub pos">+$3,553</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">CAGR · Annualized</div>
+        <div class="stat-value pos">7,923.7%</div>
+        <div class="stat-sub">11 days of data</div>
+      </div>
+    </div>
+    <div class="cagr-caveat">Based on 11 days — annualization amplifies noise.</div>
+  </div>
+
+  <!-- Benchmark Comparison -->
+  <div class="section">
+    <div class="section-label">Benchmark Comparison</div>
+    <div class="section-title">Since inception (2026-04-10)</div>
+    <table class="bench-table">
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th class="right">1-Day</th>
+          <th class="right">Total Return</th>
+          <th class="right">CAGR (annualized)</th>
+          <th class="right">Spread vs GG</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="bench-name">GG Capital</span> <span class="bench-tag bench-tag-us">Us</span></td>
+          <td class="right num pos">+3.21%</td>
+          <td class="right num pos">+14.12%</td>
+          <td class="right num pos">7,923.7%</td>
+          <td class="right num neu">—</td>
+        </tr>
+        <tr>
+          <td><span class="bench-name">S&amp;P 500</span> <span class="bench-tag">SPY</span></td>
+          <td class="right num neg">−0.65%</td>
+          <td class="right num pos">+3.62%</td>
+          <td class="right num pos">226.0%</td>
+          <td class="right num pos">+10.49%</td>
+        </tr>
+        <tr>
+          <td><span class="bench-name">Nasdaq 100</span> <span class="bench-tag">QQQ</span></td>
+          <td class="right num neg">−0.38%</td>
+          <td class="right num pos">+5.44%</td>
+          <td class="right num pos">481.1%</td>
+          <td class="right num pos">+8.67%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Positions -->
+  <div class="section">
+    <div class="section-label">Holdings</div>
+    <div class="section-title">6 positions · $114,118 invested</div>
+    <table class="positions-table">
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th class="right">Entry</th>
+          <th class="right">Current</th>
+          <th class="right">Value</th>
+          <th class="right">% Port.</th>
+          <th class="right">Return</th>
+          <th class="right">P&amp;L</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+            <td class="pos-symbol">
+                <div class="pos-symbol-name">DOCN</div>
+                <div class="pos-symbol-desc">DigitalOcean — developer-focused cloud provider offering simple compute, storage, and managed services.</div>
+            </td>
+            <td class="right num">$79.62</td>
+            <td class="right num">$96.61</td>
+            <td class="right num">$24,268</td>
+            <td class="right num">21.3%</td>
+            <td class="right num pos">+21.34%</td>
+            <td class="right num pos">+$4,268</td>
+        </tr>
+        
+        <tr>
+            <td class="pos-symbol">
+                <div class="pos-symbol-name">HIMS</div>
+                <div class="pos-symbol-desc">Hims & Hers Health — direct-to-consumer telehealth platform for personal care, mental health, and GLP-1 weight loss.</div>
+            </td>
+            <td class="right num">$23.48</td>
+            <td class="right num">$30.28</td>
+            <td class="right num">$21,921</td>
+            <td class="right num">19.2%</td>
+            <td class="right num pos">+28.95%</td>
+            <td class="right num pos">+$4,921</td>
+        </tr>
+        
+        <tr>
+            <td class="pos-symbol">
+                <div class="pos-symbol-name">SNOW</div>
+                <div class="pos-symbol-desc">Cloud data platform enabling enterprises to store, query, and share data across AWS, Azure, and GCP.</div>
+            </td>
+            <td class="right num">$136.69</td>
+            <td class="right num">$152.67</td>
+            <td class="right num">$20,104</td>
+            <td class="right num">17.6%</td>
+            <td class="right num pos">+11.69%</td>
+            <td class="right num pos">+$2,104</td>
+        </tr>
+        
+        <tr>
+            <td class="pos-symbol">
+                <div class="pos-symbol-name">NET</div>
+                <div class="pos-symbol-desc">Cloudflare — edge computing and security network accelerating and protecting a large portion of internet traffic.</div>
+            </td>
+            <td class="right num">$185.00</td>
+            <td class="right num">$209.98</td>
+            <td class="right num">$17,025</td>
+            <td class="right num">14.9%</td>
+            <td class="right num pos">+13.50%</td>
+            <td class="right num pos">+$2,025</td>
+        </tr>
+        
+        <tr>
+            <td class="pos-symbol">
+                <div class="pos-symbol-name">LUNR</div>
+                <div class="pos-symbol-desc">Intuitive Machines — lunar exploration company providing lander services to NASA's Artemis program.</div>
+            </td>
+            <td class="right num">$25.72</td>
+            <td class="right num">$28.56</td>
+            <td class="right num">$16,656</td>
+            <td class="right num">14.6%</td>
+            <td class="right num pos">+11.04%</td>
+            <td class="right num pos">+$1,656</td>
+        </tr>
+        
+        <tr>
+            <td class="pos-symbol">
+                <div class="pos-symbol-name">LCID</div>
+                <div class="pos-symbol-desc">Lucid Motors — luxury EV manufacturer producing the Air sedan with Saudi PIF as majority backer.</div>
+            </td>
+            <td class="right num">$7.70</td>
+            <td class="right num">$7.26</td>
+            <td class="right num">$14,143</td>
+            <td class="right num">12.4%</td>
+            <td class="right num neg">−5.71%</td>
+            <td class="right num neg">−$857</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Trade History -->
+  <div class="section">
+    <div class="section-label">Activity</div>
+    <div class="section-title">Trade history &amp; rationale</div>
+    <div class="trade-feed">
+      
+        <div class="trade-row">
+            <div class="trade-date">Apr 17, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">HIMS</span>
+                    <span class="trade-meta">at $29.36</span>
+                </div>
+                <div class="trade-desc">Hims & Hers Health — direct-to-consumer telehealth platform for personal care, mental health, and GLP-1 weight loss.</div>
+                <div class="trade-thesis">Lever up our best performer</div>
+            </div>
+        </div>
+        
+        <div class="trade-row">
+            <div class="trade-date">Apr 17, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">LCID</span>
+                    <span class="trade-meta">at $7.70</span>
+                </div>
+                <div class="trade-desc">Lucid Motors — luxury EV manufacturer producing the Air sedan with Saudi PIF as majority backer.</div>
+                
+            </div>
+        </div>
+        
+        <div class="trade-row">
+            <div class="trade-date">Apr 14, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">NET</span>
+                    <span class="trade-meta">at $185.00</span>
+                </div>
+                <div class="trade-desc">Cloudflare — edge computing and security network accelerating and protecting a large portion of internet traffic.</div>
+                
+            </div>
+        </div>
+        
+        <div class="trade-row">
+            <div class="trade-date">Apr 14, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">HIMS</span>
+                    <span class="trade-meta">at $21.68</span>
+                </div>
+                <div class="trade-desc">Hims & Hers Health — direct-to-consumer telehealth platform for personal care, mental health, and GLP-1 weight loss.</div>
+                <div class="trade-thesis">Lever up our best performer</div>
+            </div>
+        </div>
+        
+        <div class="trade-row">
+            <div class="trade-date">Apr 14, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">DOCN</span>
+                    <span class="trade-meta">at $79.62</span>
+                </div>
+                <div class="trade-desc">DigitalOcean — developer-focused cloud provider offering simple compute, storage, and managed services.</div>
+                
+            </div>
+        </div>
+        
+        <div class="trade-row">
+            <div class="trade-date">Apr 14, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">LUNR</span>
+                    <span class="trade-meta">at $25.72</span>
+                </div>
+                <div class="trade-desc">Intuitive Machines — lunar exploration company providing lander services to NASA's Artemis program.</div>
+                <div class="trade-thesis">Space/government contracts boom, add leverage to position</div>
+            </div>
+        </div>
+        
+        <div class="trade-row">
+            <div class="trade-date">Apr 14, 2026</div>
+            <div class="trade-main">
+                <div class="trade-line">
+                    <span class="trade-side trade-side-buy">BUY</span>
+                    <span class="trade-symbol">SNOW</span>
+                    <span class="trade-meta">at $136.69</span>
+                </div>
+                <div class="trade-desc">Cloud data platform enabling enterprises to store, query, and share data across AWS, Azure, and GCP.</div>
+                
+            </div>
+        </div>
+        
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>GG Capital · AI-managed paper trading strategy · Not investment advice.</div>
+    <div><a href="https://github.com/anishkmitra/ggcapital">github.com/anishkmitra/ggcapital</a></div>
+  </div>
+
+</div>
+
+</body>
+</html>

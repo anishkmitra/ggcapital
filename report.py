@@ -37,6 +37,11 @@ def _fmt_pct(v: float, show_sign: bool = True) -> str:
     return f"{sign}{abs(v)*100:.2f}%"
 
 
+def _fmt_pct_1dp(v: float, show_sign: bool = True) -> str:
+    sign = "+" if show_sign and v > 0 else ("−" if v < 0 else "")
+    return f"{sign}{abs(v)*100:.1f}%"
+
+
 def _fmt_paren_pct(v: float) -> str:
     """Format percent with negatives in parentheses instead of minus signs."""
     if v >= 0:
@@ -237,29 +242,29 @@ def render_dashboard(
         pl_class = pos_color(p["unrealized_pl"])
         day_class = pos_color(p["change_today"])
         entry_date = entry_dates.get(symbol, "—")
-        # Format entry date nicely (Apr 14)
+        # Format entry date as M/D/YY
         entry_date_display = entry_date
         try:
             dt = datetime.strptime(entry_date, "%Y-%m-%d")
-            entry_date_display = dt.strftime("%b %-d, %Y")
+            entry_date_display = f"{dt.month}/{dt.day}/{dt.year % 100:02d}"
         except Exception:
             pass
-        # Format shares: integer if whole, else 2 decimals
-        qty = p["qty"]
-        qty_display = f"{qty:,.0f}" if qty == int(qty) else f"{qty:,.2f}"
+        # Round shares to nearest whole number
+        qty_display = f"{round(p['qty']):,}"
+        # Total return: 1 decimal place
+        total_return_display = _fmt_pct_1dp(p["unrealized_pl_pct"])
+        day_return_display = _fmt_pct_1dp(p["change_today"])
         pos_rows += f"""
         <tr>
+            <td class="pos-ticker">{symbol}</td>
             <td class="entry-date">{entry_date_display}</td>
             <td class="right num">${p['avg_entry_price']:,.2f}</td>
             <td class="right num">{qty_display}</td>
             <td class="right num">${p['market_value']:,.0f}</td>
             <td class="right num">{pct_of_port:.1f}%</td>
-            <td class="right num {pl_class}">{_fmt_pct(p['unrealized_pl_pct'])}</td>
-            <td class="right num {day_class}">{_fmt_pct(p['change_today'])}</td>
-            <td class="pos-desc">
-                <div class="pos-symbol-name">{symbol}</div>
-                <div class="pos-symbol-desc">{desc}</div>
-            </td>
+            <td class="right num {pl_class}">{total_return_display}</td>
+            <td class="right num {day_class}">{day_return_display}</td>
+            <td class="pos-desc">{desc}</td>
         </tr>
         """
 
@@ -522,26 +527,25 @@ def render_dashboard(
   .positions-table tbody tr:hover {{
     background: #F4F6F8;
   }}
+  .pos-ticker {{
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    color: #0A0A0A;
+  }}
   .entry-date {{
     color: #555;
     font-size: 13px;
+    font-feature-settings: 'tnum';
   }}
   .pos-desc {{
     white-space: normal !important;
     padding-left: 20px !important;
     border-left: 1px solid #EEEEEE;
-    max-width: 360px;
-  }}
-  .pos-symbol-name {{
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: -0.01em;
-    margin-bottom: 2px;
-  }}
-  .pos-symbol-desc {{
+    max-width: 380px;
     font-size: 12px;
     color: #666;
-    line-height: 1.45;
+    line-height: 1.5;
   }}
 
   /* Value coloring */
@@ -781,6 +785,7 @@ def render_dashboard(
     <table class="positions-table">
       <thead>
         <tr>
+          <th>Ticker</th>
           <th>Entry</th>
           <th class="right">Avg Price</th>
           <th class="right">Shares</th>

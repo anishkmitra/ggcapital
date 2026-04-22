@@ -65,7 +65,11 @@ class Broker:
                 "cost_basis": float(p.cost_basis),
                 "unrealized_pl": float(p.unrealized_pl),
                 "unrealized_pl_pct": float(p.unrealized_plpc),
+                "unrealized_intraday_pl": float(p.unrealized_intraday_pl) if p.unrealized_intraday_pl is not None else 0.0,
+                "unrealized_intraday_pl_pct": float(p.unrealized_intraday_plpc) if p.unrealized_intraday_plpc is not None else 0.0,
                 "current_price": float(p.current_price),
+                "lastday_price": float(p.lastday_price) if p.lastday_price is not None else 0.0,
+                "change_today": float(p.change_today) if p.change_today is not None else 0.0,
                 "avg_entry_price": float(p.avg_entry_price),
             })
         return result

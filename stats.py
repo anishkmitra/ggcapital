@@ -37,26 +37,39 @@ def get_portfolio_history(period: str = "1M", timeframe: str = "1D") -> dict:
 
 def find_inception_date(history: dict) -> tuple[datetime, float] | None:
     """
-    Find inception: the first day equity > 0 AND a trade occurred
-    (equity changes from previous day or the day before it changes).
+    Inception = the first day equity actually moved (i.e. first day of trading).
+    We use the day *before* the first equity change as the baseline so that
+    day's full return is captured.
     Returns (inception_datetime, starting_equity).
     """
     equity = history.get("equity", [])
     timestamps = history.get("timestamp", [])
 
-    # Find first non-zero equity (account funded)
-    funding_idx = None
+    # Find first non-zero equity value (account funded)
+    funded_idx = None
     for i, eq in enumerate(equity):
         if eq > 0:
-            funding_idx = i
+            funded_idx = i
             break
-
-    if funding_idx is None:
+    if funded_idx is None:
         return None
 
-    # Inception = day account was funded (includes the $100K starting value)
-    inception_ts = timestamps[funding_idx]
-    starting_equity = equity[funding_idx]
+    # Now walk forward from funded_idx to find the first day equity changed
+    baseline_eq = equity[funded_idx]
+    first_change_idx = None
+    for i in range(funded_idx + 1, len(equity)):
+        if equity[i] != baseline_eq and equity[i] > 0:
+            first_change_idx = i
+            break
+
+    if first_change_idx is None:
+        # No trading has happened yet — fall back to funding date
+        return datetime.fromtimestamp(timestamps[funded_idx]), baseline_eq
+
+    # Inception = the trading day on which equity first moved.
+    # Baseline = the equity value going INTO that day (i.e. prior day's close).
+    inception_ts = timestamps[first_change_idx]
+    starting_equity = equity[first_change_idx - 1]
     return datetime.fromtimestamp(inception_ts), starting_equity
 
 

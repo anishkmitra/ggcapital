@@ -37,6 +37,13 @@ def _fmt_pct(v: float, show_sign: bool = True) -> str:
     return f"{sign}{abs(v)*100:.2f}%"
 
 
+def _fmt_paren_pct(v: float) -> str:
+    """Format percent with negatives in parentheses instead of minus signs."""
+    if v >= 0:
+        return f"+{v*100:.2f}%"
+    return f"({abs(v)*100:.2f}%)"
+
+
 def _get_last_equity() -> float:
     """Get yesterday's closing equity for accurate daily return."""
     headers = {
@@ -49,6 +56,35 @@ def _get_last_equity() -> float:
         return float(r.json().get("last_equity", 0))
     except Exception:
         return 0
+
+
+def _get_entry_dates() -> dict[str, str]:
+    """Return a map of symbol -> earliest filled-buy date (YYYY-MM-DD)."""
+    headers = {
+        "APCA-API-KEY-ID": config.ALPACA_API_KEY,
+        "APCA-API-SECRET-KEY": config.ALPACA_SECRET_KEY,
+    }
+    base = "https://api.alpaca.markets" if config.TRADING_MODE == "live" else "https://paper-api.alpaca.markets"
+    try:
+        r = requests.get(
+            f"{base}/v2/orders",
+            headers=headers,
+            params={"status": "closed", "limit": 500, "direction": "asc"},
+            timeout=10,
+        )
+        orders = r.json()
+    except Exception:
+        return {}
+    first_buy: dict[str, str] = {}
+    for o in orders:
+        if o.get("status") != "filled" or o.get("side") != "buy":
+            continue
+        symbol = o.get("symbol")
+        if not symbol or symbol in first_buy:
+            continue
+        ts = o.get("filled_at") or o.get("submitted_at") or ""
+        first_buy[symbol] = ts[:10]
+    return first_buy
 
 
 def _extract_trade_history() -> list[dict]:
@@ -192,24 +228,38 @@ def render_dashboard(
     )
 
     # Positions rows
+    entry_dates = _get_entry_dates()
     pos_rows = ""
     for p in positions_sorted:
         symbol = p["symbol"]
         desc = get_description(symbol)
         pct_of_port = (p["market_value"] / account["equity"]) * 100 if account["equity"] > 0 else 0
         pl_class = pos_color(p["unrealized_pl"])
+        day_class = pos_color(p["change_today"])
+        entry_date = entry_dates.get(symbol, "—")
+        # Format entry date nicely (Apr 14)
+        entry_date_display = entry_date
+        try:
+            dt = datetime.strptime(entry_date, "%Y-%m-%d")
+            entry_date_display = dt.strftime("%b %-d, %Y")
+        except Exception:
+            pass
+        # Format shares: integer if whole, else 2 decimals
+        qty = p["qty"]
+        qty_display = f"{qty:,.0f}" if qty == int(qty) else f"{qty:,.2f}"
         pos_rows += f"""
         <tr>
-            <td class="pos-symbol">
-                <div class="pos-symbol-name">{symbol}</div>
-                <div class="pos-symbol-desc">{desc}</div>
-            </td>
+            <td class="entry-date">{entry_date_display}</td>
             <td class="right num">${p['avg_entry_price']:,.2f}</td>
-            <td class="right num">${p['current_price']:,.2f}</td>
+            <td class="right num">{qty_display}</td>
             <td class="right num">${p['market_value']:,.0f}</td>
             <td class="right num">{pct_of_port:.1f}%</td>
             <td class="right num {pl_class}">{_fmt_pct(p['unrealized_pl_pct'])}</td>
-            <td class="right num {pl_class}">{_fmt_dollars(p['unrealized_pl'], show_sign=True)}</td>
+            <td class="right num {day_class}">{_fmt_pct(p['change_today'])}</td>
+            <td class="pos-desc">
+                <div class="pos-symbol-name">{symbol}</div>
+                <div class="pos-symbol-desc">{desc}</div>
+            </td>
         </tr>
         """
 
@@ -449,32 +499,49 @@ def render_dashboard(
   .positions-table th {{
     text-align: left;
     font-weight: 600;
-    font-size: 11px;
+    font-size: 10px;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-bottom: 1px solid #EEEEEE;
+    white-space: nowrap;
   }}
   .positions-table th.right {{ text-align: right; }}
   .positions-table td {{
-    padding: 20px 16px;
+    padding: 12px 14px;
     border-bottom: 1px solid #F3F3F3;
-    vertical-align: top;
+    vertical-align: middle;
     font-feature-settings: 'tnum';
+    white-space: nowrap;
   }}
   .positions-table td.right {{ text-align: right; }}
+  .positions-table tbody tr:nth-child(even) {{
+    background: #FAFBFC;
+  }}
+  .positions-table tbody tr:hover {{
+    background: #F4F6F8;
+  }}
+  .entry-date {{
+    color: #555;
+    font-size: 13px;
+  }}
+  .pos-desc {{
+    white-space: normal !important;
+    padding-left: 20px !important;
+    border-left: 1px solid #EEEEEE;
+    max-width: 360px;
+  }}
   .pos-symbol-name {{
     font-weight: 700;
-    font-size: 15px;
+    font-size: 13px;
     letter-spacing: -0.01em;
+    margin-bottom: 2px;
   }}
   .pos-symbol-desc {{
     font-size: 12px;
     color: #666;
-    margin-top: 4px;
-    line-height: 1.5;
-    max-width: 480px;
+    line-height: 1.45;
   }}
 
   /* Value coloring */
@@ -583,25 +650,31 @@ def render_dashboard(
     .stat:nth-child(2n) {{ border-right: none; }}
     .stat:nth-last-child(-n+2) {{ border-bottom: none; }}
     .positions-table thead {{ display: none; }}
-    .positions-table tr {{
+    .positions-table tbody tr {{
       display: block;
-      padding: 16px 0;
-      border-bottom: 1px solid #F3F3F3;
+      padding: 16px 12px;
+      border-bottom: 1px solid #EEEEEE;
+      background: #ffffff !important;
+    }}
+    .positions-table tbody tr:nth-child(even) {{
+      background: #FAFBFC !important;
     }}
     .positions-table td {{
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
+      padding: 4px 0;
       border: none;
       font-size: 13px;
+      white-space: normal;
     }}
-    .positions-table td.pos-symbol {{ display: block; margin-bottom: 8px; }}
-    .positions-table td.right::before {{
-      content: attr(data-label);
-      color: #888;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .positions-table td.pos-desc {{
+      display: block;
+      padding-left: 0 !important;
+      border-left: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #EEEEEE;
+      max-width: none;
     }}
     .trade-row {{ grid-template-columns: 1fr; gap: 8px; }}
   }}
@@ -675,8 +748,7 @@ def render_dashboard(
           <th>Strategy</th>
           <th class="right">1-Day</th>
           <th class="right">Total Return</th>
-          <th class="right">CAGR (annualized)</th>
-          <th class="right">Spread vs GG</th>
+          <th class="right">GG Excess Return / Underperformance</th>
         </tr>
       </thead>
       <tbody>
@@ -684,22 +756,19 @@ def render_dashboard(
           <td><span class="bench-name">GG Capital</span> <span class="bench-tag bench-tag-us">Us</span></td>
           <td class="right num {pos_color(day_pct)}">{_fmt_pct(day_pct)}</td>
           <td class="right num {pos_color(total_pct)}">{_fmt_pct(total_pct)}</td>
-          <td class="right num {pos_color(cagr)}">{gg_cagr_display}</td>
           <td class="right num neu">—</td>
         </tr>
         <tr>
           <td><span class="bench-name">S&amp;P 500</span> <span class="bench-tag">SPY</span></td>
           <td class="right num {pos_color(spy_day)}">{_fmt_pct(spy_day)}</td>
           <td class="right num {pos_color(spy_ret)}">{_fmt_pct(spy_ret)}</td>
-          <td class="right num {pos_color(spy_cagr)}">{spy_cagr_display}</td>
-          <td class="right num {pos_color(alpha_spy or 0)}">{_fmt_pct(alpha_spy or 0)}</td>
+          <td class="right num {pos_color(alpha_spy or 0)}">{_fmt_paren_pct(alpha_spy or 0)}</td>
         </tr>
         <tr>
           <td><span class="bench-name">Nasdaq 100</span> <span class="bench-tag">QQQ</span></td>
           <td class="right num {pos_color(qqq_day)}">{_fmt_pct(qqq_day)}</td>
           <td class="right num {pos_color(qqq_ret)}">{_fmt_pct(qqq_ret)}</td>
-          <td class="right num {pos_color(qqq_cagr)}">{qqq_cagr_display}</td>
-          <td class="right num {pos_color(alpha_qqq or 0)}">{_fmt_pct(alpha_qqq or 0)}</td>
+          <td class="right num {pos_color(alpha_qqq or 0)}">{_fmt_paren_pct(alpha_qqq or 0)}</td>
         </tr>
       </tbody>
     </table>
@@ -712,13 +781,14 @@ def render_dashboard(
     <table class="positions-table">
       <thead>
         <tr>
-          <th>Position</th>
-          <th class="right">Entry</th>
-          <th class="right">Current</th>
+          <th>Entry</th>
+          <th class="right">Avg Price</th>
+          <th class="right">Shares</th>
           <th class="right">Value</th>
           <th class="right">% Port.</th>
-          <th class="right">Return</th>
-          <th class="right">P&amp;L</th>
+          <th class="right">Total Return</th>
+          <th class="right">1-Day</th>
+          <th>Business</th>
         </tr>
       </thead>
       <tbody>

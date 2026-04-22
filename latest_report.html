@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GG Capital · April 21, 2026 · 10:44 PM PT</title>
+<title>GG Capital · April 21, 2026 · 11:02 PM PT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -199,32 +199,49 @@
   .positions-table th {
     text-align: left;
     font-weight: 600;
-    font-size: 11px;
+    font-size: 10px;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-bottom: 1px solid #EEEEEE;
+    white-space: nowrap;
   }
   .positions-table th.right { text-align: right; }
   .positions-table td {
-    padding: 20px 16px;
+    padding: 12px 14px;
     border-bottom: 1px solid #F3F3F3;
-    vertical-align: top;
+    vertical-align: middle;
     font-feature-settings: 'tnum';
+    white-space: nowrap;
   }
   .positions-table td.right { text-align: right; }
+  .positions-table tbody tr:nth-child(even) {
+    background: #FAFBFC;
+  }
+  .positions-table tbody tr:hover {
+    background: #F4F6F8;
+  }
+  .entry-date {
+    color: #555;
+    font-size: 13px;
+  }
+  .pos-desc {
+    white-space: normal !important;
+    padding-left: 20px !important;
+    border-left: 1px solid #EEEEEE;
+    max-width: 360px;
+  }
   .pos-symbol-name {
     font-weight: 700;
-    font-size: 15px;
+    font-size: 13px;
     letter-spacing: -0.01em;
+    margin-bottom: 2px;
   }
   .pos-symbol-desc {
     font-size: 12px;
     color: #666;
-    margin-top: 4px;
-    line-height: 1.5;
-    max-width: 480px;
+    line-height: 1.45;
   }
 
   /* Value coloring */
@@ -333,25 +350,31 @@
     .stat:nth-child(2n) { border-right: none; }
     .stat:nth-last-child(-n+2) { border-bottom: none; }
     .positions-table thead { display: none; }
-    .positions-table tr {
+    .positions-table tbody tr {
       display: block;
-      padding: 16px 0;
-      border-bottom: 1px solid #F3F3F3;
+      padding: 16px 12px;
+      border-bottom: 1px solid #EEEEEE;
+      background: #ffffff !important;
+    }
+    .positions-table tbody tr:nth-child(even) {
+      background: #FAFBFC !important;
     }
     .positions-table td {
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
+      padding: 4px 0;
       border: none;
       font-size: 13px;
+      white-space: normal;
     }
-    .positions-table td.pos-symbol { display: block; margin-bottom: 8px; }
-    .positions-table td.right::before {
-      content: attr(data-label);
-      color: #888;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .positions-table td.pos-desc {
+      display: block;
+      padding-left: 0 !important;
+      border-left: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #EEEEEE;
+      max-width: none;
     }
     .trade-row { grid-template-columns: 1fr; gap: 8px; }
   }
@@ -368,8 +391,8 @@
       <div class="brand-sub">An AI-managed systematic trading fund.</div>
     </div>
     <div class="header-meta">
-      Updated April 21, 2026 · 10:44 PM PT<br>
-      Inception · 2026-04-10
+      Updated April 21, 2026 · 11:02 PM PT<br>
+      Inception · 2026-04-14
     </div>
   </div>
 
@@ -393,63 +416,59 @@
     <div class="stats-grid">
       <div class="stat">
         <div class="stat-label">Portfolio Value</div>
-        <div class="stat-value">$114,118</div>
+        <div class="stat-value">$114,098</div>
         <div class="stat-sub">$0 cash</div>
       </div>
       <div class="stat">
         <div class="stat-label">Total Return · Inception</div>
-        <div class="stat-value pos">+14.12%</div>
-        <div class="stat-sub pos">+$14,118</div>
+        <div class="stat-value pos">+14.10%</div>
+        <div class="stat-sub pos">+$14,098</div>
       </div>
       <div class="stat">
         <div class="stat-label">1-Day Return</div>
-        <div class="stat-value pos">+3.21%</div>
-        <div class="stat-sub pos">+$3,553</div>
+        <div class="stat-value pos">+3.20%</div>
+        <div class="stat-sub pos">+$3,533</div>
       </div>
       <div class="stat">
         <div class="stat-label">CAGR · Annualized</div>
-        <div class="stat-value pos">7,923.7%</div>
-        <div class="stat-sub">11 days of data</div>
+        <div class="stat-value pos">97,336%</div>
+        <div class="stat-sub">7 days of data</div>
       </div>
     </div>
-    <div class="cagr-caveat">Based on 11 days — annualization amplifies noise.</div>
+    <div class="cagr-caveat">Based on 7 days — annualization amplifies noise.</div>
   </div>
 
   <!-- Benchmark Comparison -->
   <div class="section">
     <div class="section-label">Benchmark Comparison</div>
-    <div class="section-title">Since inception (2026-04-10)</div>
+    <div class="section-title">Since inception (2026-04-14)</div>
     <table class="bench-table">
       <thead>
         <tr>
           <th>Strategy</th>
           <th class="right">1-Day</th>
           <th class="right">Total Return</th>
-          <th class="right">CAGR (annualized)</th>
-          <th class="right">Spread vs GG</th>
+          <th class="right">GG Excess Return / Underperformance</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><span class="bench-name">GG Capital</span> <span class="bench-tag bench-tag-us">Us</span></td>
-          <td class="right num pos">+3.21%</td>
-          <td class="right num pos">+14.12%</td>
-          <td class="right num pos">7,923.7%</td>
+          <td class="right num pos">+3.20%</td>
+          <td class="right num pos">+14.10%</td>
           <td class="right num neu">—</td>
         </tr>
         <tr>
           <td><span class="bench-name">S&amp;P 500</span> <span class="bench-tag">SPY</span></td>
           <td class="right num neg">−0.65%</td>
-          <td class="right num pos">+3.62%</td>
-          <td class="right num pos">226.0%</td>
-          <td class="right num pos">+10.49%</td>
+          <td class="right num pos">+1.39%</td>
+          <td class="right num pos">+12.71%</td>
         </tr>
         <tr>
           <td><span class="bench-name">Nasdaq 100</span> <span class="bench-tag">QQQ</span></td>
           <td class="right num neg">−0.38%</td>
-          <td class="right num pos">+5.44%</td>
-          <td class="right num pos">481.1%</td>
-          <td class="right num pos">+8.67%</td>
+          <td class="right num pos">+2.50%</td>
+          <td class="right num pos">+11.60%</td>
         </tr>
       </tbody>
     </table>
@@ -458,97 +477,104 @@
   <!-- Positions -->
   <div class="section">
     <div class="section-label">Holdings</div>
-    <div class="section-title">6 positions · $114,118 invested</div>
+    <div class="section-title">6 positions · $114,098 invested</div>
     <table class="positions-table">
       <thead>
         <tr>
-          <th>Position</th>
-          <th class="right">Entry</th>
-          <th class="right">Current</th>
+          <th>Entry</th>
+          <th class="right">Avg Price</th>
+          <th class="right">Shares</th>
           <th class="right">Value</th>
           <th class="right">% Port.</th>
-          <th class="right">Return</th>
-          <th class="right">P&amp;L</th>
+          <th class="right">Total Return</th>
+          <th class="right">1-Day</th>
+          <th>Business</th>
         </tr>
       </thead>
       <tbody>
         
         <tr>
-            <td class="pos-symbol">
-                <div class="pos-symbol-name">DOCN</div>
-                <div class="pos-symbol-desc">DigitalOcean — developer-focused cloud provider offering simple compute, storage, and managed services.</div>
-            </td>
+            <td class="entry-date">Apr 14, 2026</td>
             <td class="right num">$79.62</td>
-            <td class="right num">$96.61</td>
+            <td class="right num">251.20</td>
             <td class="right num">$24,268</td>
             <td class="right num">21.3%</td>
             <td class="right num pos">+21.34%</td>
-            <td class="right num pos">+$4,268</td>
+            <td class="right num pos">+2.01%</td>
+            <td class="pos-desc">
+                <div class="pos-symbol-name">DOCN</div>
+                <div class="pos-symbol-desc">DigitalOcean — developer-focused cloud provider offering simple compute, storage, and managed services.</div>
+            </td>
         </tr>
         
         <tr>
-            <td class="pos-symbol">
-                <div class="pos-symbol-name">HIMS</div>
-                <div class="pos-symbol-desc">Hims & Hers Health — direct-to-consumer telehealth platform for personal care, mental health, and GLP-1 weight loss.</div>
-            </td>
+            <td class="entry-date">Apr 14, 2026</td>
             <td class="right num">$23.48</td>
-            <td class="right num">$30.28</td>
+            <td class="right num">723.93</td>
             <td class="right num">$21,921</td>
             <td class="right num">19.2%</td>
             <td class="right num pos">+28.95%</td>
-            <td class="right num pos">+$4,921</td>
+            <td class="right num pos">+1.75%</td>
+            <td class="pos-desc">
+                <div class="pos-symbol-name">HIMS</div>
+                <div class="pos-symbol-desc">Hims & Hers Health — direct-to-consumer telehealth platform for personal care, mental health, and GLP-1 weight loss.</div>
+            </td>
         </tr>
         
         <tr>
-            <td class="pos-symbol">
-                <div class="pos-symbol-name">SNOW</div>
-                <div class="pos-symbol-desc">Cloud data platform enabling enterprises to store, query, and share data across AWS, Azure, and GCP.</div>
-            </td>
+            <td class="entry-date">Apr 14, 2026</td>
             <td class="right num">$136.69</td>
-            <td class="right num">$152.67</td>
+            <td class="right num">131.68</td>
             <td class="right num">$20,104</td>
             <td class="right num">17.6%</td>
             <td class="right num pos">+11.69%</td>
-            <td class="right num pos">+$2,104</td>
+            <td class="right num pos">+1.21%</td>
+            <td class="pos-desc">
+                <div class="pos-symbol-name">SNOW</div>
+                <div class="pos-symbol-desc">Cloud data platform enabling enterprises to store, query, and share data across AWS, Azure, and GCP.</div>
+            </td>
         </tr>
         
         <tr>
-            <td class="pos-symbol">
-                <div class="pos-symbol-name">NET</div>
-                <div class="pos-symbol-desc">Cloudflare — edge computing and security network accelerating and protecting a large portion of internet traffic.</div>
-            </td>
+            <td class="entry-date">Apr 14, 2026</td>
             <td class="right num">$185.00</td>
-            <td class="right num">$209.98</td>
+            <td class="right num">81.08</td>
             <td class="right num">$17,025</td>
             <td class="right num">14.9%</td>
             <td class="right num pos">+13.50%</td>
-            <td class="right num pos">+$2,025</td>
+            <td class="right num pos">+1.11%</td>
+            <td class="pos-desc">
+                <div class="pos-symbol-name">NET</div>
+                <div class="pos-symbol-desc">Cloudflare — edge computing and security network accelerating and protecting a large portion of internet traffic.</div>
+            </td>
         </tr>
         
         <tr>
-            <td class="pos-symbol">
-                <div class="pos-symbol-name">LUNR</div>
-                <div class="pos-symbol-desc">Intuitive Machines — lunar exploration company providing lander services to NASA's Artemis program.</div>
-            </td>
+            <td class="entry-date">Apr 14, 2026</td>
             <td class="right num">$25.72</td>
-            <td class="right num">$28.56</td>
+            <td class="right num">583.20</td>
             <td class="right num">$16,656</td>
             <td class="right num">14.6%</td>
             <td class="right num pos">+11.04%</td>
-            <td class="right num pos">+$1,656</td>
+            <td class="right num pos">+2.66%</td>
+            <td class="pos-desc">
+                <div class="pos-symbol-name">LUNR</div>
+                <div class="pos-symbol-desc">Intuitive Machines — lunar exploration company providing lander services to NASA's Artemis program.</div>
+            </td>
         </tr>
         
         <tr>
-            <td class="pos-symbol">
+            <td class="entry-date">Apr 17, 2026</td>
+            <td class="right num">$7.70</td>
+            <td class="right num">1,948.05</td>
+            <td class="right num">$14,123</td>
+            <td class="right num">12.4%</td>
+            <td class="right num neg">−5.84%</td>
+            <td class="right num pos">+1.97%</td>
+            <td class="pos-desc">
                 <div class="pos-symbol-name">LCID</div>
                 <div class="pos-symbol-desc">Lucid Motors — luxury EV manufacturer producing the Air sedan with Saudi PIF as majority backer.</div>
             </td>
-            <td class="right num">$7.70</td>
-            <td class="right num">$7.26</td>
-            <td class="right num">$14,143</td>
-            <td class="right num">12.4%</td>
-            <td class="right num neg">−5.71%</td>
-            <td class="right num neg">−$857</td>
         </tr>
         
       </tbody>

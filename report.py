@@ -169,7 +169,7 @@ def _extract_theses_from_logs(log_dir: Path) -> dict[str, str]:
 # ── Strategy Copy ──────────────────────────────────────────────
 
 STRATEGY_COPY = {
-    "tagline": "An AI-managed systematic trading fund.",
+    "tagline": "An AI-native fund for both tails of the IQ bell curve — top-percentile returns, zero overthinking.",
     "overview": (
         "GG Capital is a fully autonomous trading strategy run by an AI agent. "
         "The agent screens a curated universe of high-beta US equities, builds "
@@ -188,7 +188,7 @@ STRATEGY_COPY = {
         ("Leverage", "None — no margin, no naked options, no shorts"),
         ("Trade cadence", "3× daily (Mon-Fri)"),
     ],
-    "goal": "Target: Outperform SPY and QQQ by 10-20% annualized while keeping max drawdown under 25%.",
+    "goal": "Target: Significantly outperform SPY and QQQ on a post-fee, pre-tax basis regardless of market backdrop.",
 }
 
 

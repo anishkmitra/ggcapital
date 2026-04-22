@@ -290,7 +290,7 @@ class Broker:
             params["expiration_date"] = expiration_date
 
         resp = requests.get(
-            f"https://paper-api.alpaca.markets/v2/options/contracts",
+            f"{base_url}/v2/options/contracts",
             headers=headers,
             params=params,
         )

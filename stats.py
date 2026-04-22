@@ -90,12 +90,14 @@ def get_benchmark_return(symbol: str, start_date: datetime, end_date: datetime =
 
         start_price = float(hist["Close"].iloc[0])
         end_price = float(hist["Close"].iloc[-1])
+        if start_price <= 0:
+            return {"error": f"Invalid start price for {symbol}"}
         total_return = (end_price - start_price) / start_price
 
         # 1-day return (today vs yesterday)
         if len(hist) >= 2:
             prev_price = float(hist["Close"].iloc[-2])
-            day_return = (end_price - prev_price) / prev_price
+            day_return = (end_price - prev_price) / prev_price if prev_price > 0 else 0.0
         else:
             day_return = 0.0
 
@@ -146,7 +148,11 @@ def compute_portfolio_stats(current_equity: float, last_equity: float = None) ->
     now = datetime.now()
     days_since_inception = (now - inception_date).days
 
-    # Total return since inception
+    # Total return since inception. find_inception_date guarantees
+    # starting_equity > 0 when it returns a funded baseline, but guard
+    # explicitly — a 0 here would otherwise raise ZeroDivisionError.
+    if starting_equity <= 0:
+        return {"error": "Starting equity is zero; cannot compute returns."}
     total_return_pct = (current_equity - starting_equity) / starting_equity
     total_return_dollars = current_equity - starting_equity
 
@@ -158,7 +164,7 @@ def compute_portfolio_stats(current_equity: float, last_equity: float = None) ->
         # Fallback: use the portfolio history to find previous day's equity
         equity = history.get("equity", [])
         nonzero_equity = [e for e in equity if e > 0]
-        if len(nonzero_equity) >= 2:
+        if len(nonzero_equity) >= 2 and nonzero_equity[-2] > 0:
             prev_equity = nonzero_equity[-2]
             day_return_pct = (current_equity - prev_equity) / prev_equity
             day_return_dollars = current_equity - prev_equity

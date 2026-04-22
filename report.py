@@ -8,6 +8,7 @@ Builds a clean, Neutrogena-inspired HTML report with:
 - Trade history feed with rationale
 """
 
+import html
 import os
 import re
 import sys
@@ -19,10 +20,16 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'), override=True)
 
 from broker import Broker
-from stats import compute_portfolio_stats
+from stats import compute_portfolio_stats, _alpaca_headers, _alpaca_base_url
 from descriptions import get_description
 import requests
 import config
+
+
+# Shorthand for HTML-escaping any string interpolated into the template.
+# Covers ticker descriptions (static), theses parsed from LLM logs (untrusted),
+# and symbols/prices from Alpaca (trusted but escaped defensively).
+_e = html.escape
 
 
 # ── Helpers ──────────────────────────────────────────────
@@ -51,13 +58,12 @@ def _fmt_paren_pct(v: float) -> str:
 
 def _get_last_equity() -> float:
     """Get yesterday's closing equity for accurate daily return."""
-    headers = {
-        "APCA-API-KEY-ID": config.ALPACA_API_KEY,
-        "APCA-API-SECRET-KEY": config.ALPACA_SECRET_KEY,
-    }
-    base = "https://api.alpaca.markets" if config.TRADING_MODE == "live" else "https://paper-api.alpaca.markets"
     try:
-        r = requests.get(f"{base}/v2/account", headers=headers, timeout=10)
+        r = requests.get(
+            f"{_alpaca_base_url()}/v2/account",
+            headers=_alpaca_headers(),
+            timeout=10,
+        )
         return float(r.json().get("last_equity", 0))
     except Exception:
         return 0
@@ -65,15 +71,10 @@ def _get_last_equity() -> float:
 
 def _get_entry_dates() -> dict[str, str]:
     """Return a map of symbol -> earliest filled-buy date (YYYY-MM-DD)."""
-    headers = {
-        "APCA-API-KEY-ID": config.ALPACA_API_KEY,
-        "APCA-API-SECRET-KEY": config.ALPACA_SECRET_KEY,
-    }
-    base = "https://api.alpaca.markets" if config.TRADING_MODE == "live" else "https://paper-api.alpaca.markets"
     try:
         r = requests.get(
-            f"{base}/v2/orders",
-            headers=headers,
+            f"{_alpaca_base_url()}/v2/orders",
+            headers=_alpaca_headers(),
             params={"status": "closed", "limit": 500, "direction": "asc"},
             timeout=10,
         )
@@ -239,6 +240,16 @@ def render_dashboard(
 
     pos_color = lambda v: "pos" if v > 0 else ("neg" if v < 0 else "neu")
 
+    # Alpha cells render "—" when the benchmark fetch failed (yfinance can
+    # return empty on rate limits / weekends), rather than a misleading 0.00%.
+    def _alpha_cell(v):
+        if v is None:
+            return ('neu', '—')
+        return (pos_color(v), _fmt_paren_pct(v))
+
+    alpha_spy_class, alpha_spy_text = _alpha_cell(alpha_spy)
+    alpha_qqq_class, alpha_qqq_text = _alpha_cell(alpha_qqq)
+
     # Sort positions by market value (largest first)
     positions_sorted = sorted(positions, key=lambda p: p["market_value"], reverse=True)
     total_invested = sum(p["market_value"] for p in positions_sorted)
@@ -303,8 +314,8 @@ def render_dashboard(
         day_return_display = _fmt_pct_1dp(p["change_today"])
         pos_rows += f"""
         <tr>
-            <td class="pos-ticker">{symbol}</td>
-            <td class="entry-date">{entry_date_display}</td>
+            <td class="pos-ticker">{_e(symbol)}</td>
+            <td class="entry-date">{_e(entry_date_display)}</td>
             <td class="right num">${p['avg_entry_price']:,.2f}</td>
             <td class="right num">${p['current_price']:,.2f}</td>
             <td class="right num">{qty_display}</td>
@@ -312,26 +323,26 @@ def render_dashboard(
             <td class="right num">{pct_of_port:.1f}%</td>
             <td class="right num {pl_class}">{total_return_display}</td>
             <td class="right num {day_class}">{day_return_display}</td>
-            <td class="pos-desc">{desc}</td>
+            <td class="pos-desc">{_e(desc)}</td>
         </tr>
         """
 
     # Trade history feed (most recent first)
     trade_feed_html = ""
     for t in trade_history[:30]:
-        thesis_html = f'<div class="trade-thesis">{t["thesis"]}</div>' if t["thesis"] else ""
+        thesis_html = f'<div class="trade-thesis">{_e(t["thesis"])}</div>' if t["thesis"] else ""
         desc = get_description(t["symbol"])
         side_class = "buy" if t["side"] == "BUY" else "sell"
         trade_feed_html += f"""
         <div class="trade-row">
-            <div class="trade-date">{t['date']}</div>
+            <div class="trade-date">{_e(t['date'])}</div>
             <div class="trade-main">
                 <div class="trade-line">
-                    <span class="trade-side trade-side-{side_class}">{t['side']}</span>
-                    <span class="trade-symbol">{t['symbol']}</span>
-                    <span class="trade-meta">at {t['filled_price']}</span>
+                    <span class="trade-side trade-side-{side_class}">{_e(t['side'])}</span>
+                    <span class="trade-symbol">{_e(t['symbol'])}</span>
+                    <span class="trade-meta">at {_e(t['filled_price'])}</span>
                 </div>
-                <div class="trade-desc">{desc}</div>
+                <div class="trade-desc">{_e(desc)}</div>
                 {thesis_html}
             </div>
         </div>
@@ -344,7 +355,7 @@ def render_dashboard(
 
     # Handle extreme CAGR values (early in life, annualized % is absurd)
     cagr_note = ""
-    if days_since < 30:
+    if days_since < 60:
         cagr_note = f'<div class="cagr-caveat">Based on {days_since} days — annualization amplifies noise.</div>'
 
     spy_cagr_display = f"{spy_cagr*100:,.1f}%" if abs(spy_cagr) < 100 else f"{spy_cagr*100:,.0f}%"
@@ -1022,13 +1033,13 @@ def render_dashboard(
           <td><span class="bench-name">S&amp;P 500</span> <span class="bench-tag">SPY</span></td>
           <td class="right num {pos_color(spy_day)}">{_fmt_pct(spy_day)}</td>
           <td class="right num {pos_color(spy_ret)}">{_fmt_pct(spy_ret)}</td>
-          <td class="right num {pos_color(alpha_spy or 0)}">{_fmt_paren_pct(alpha_spy or 0)}</td>
+          <td class="right num {alpha_spy_class}">{alpha_spy_text}</td>
         </tr>
         <tr>
           <td><span class="bench-name">Nasdaq 100</span> <span class="bench-tag">QQQ</span></td>
           <td class="right num {pos_color(qqq_day)}">{_fmt_pct(qqq_day)}</td>
           <td class="right num {pos_color(qqq_ret)}">{_fmt_pct(qqq_ret)}</td>
-          <td class="right num {pos_color(alpha_qqq or 0)}">{_fmt_paren_pct(alpha_qqq or 0)}</td>
+          <td class="right num {alpha_qqq_class}">{alpha_qqq_text}</td>
         </tr>
       </tbody>
     </table>

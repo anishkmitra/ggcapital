@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GG Capital · April 21, 2026 · 11:37 PM PT</title>
+<title>GG Capital · April 22, 2026 · 12:00 AM PT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -110,6 +110,73 @@
     color: #0A0A0A;
     font-weight: 500;
     font-feature-settings: 'tnum';
+  }
+
+  /* Philosophy section */
+  .philosophy-image {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    border: 1px solid #EEEEEE;
+    border-radius: 4px;
+    background: #FAFBFC;
+  }
+  .philosophy-image img {
+    max-width: 100%;
+    height: auto;
+    max-height: 460px;
+    border-radius: 4px;
+  }
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 0;
+    border: 1px solid #EEEEEE;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .phil-tile {
+    padding: 32px 28px;
+    border-right: 1px solid #EEEEEE;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }
+  .phil-tile:last-child { border-right: none; }
+  .phil-iq {
+    font-size: 10px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .phil-label {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0A0A0A;
+  }
+  .phil-midwit .phil-label {
+    color: #B33030;
+  }
+  .phil-quote {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.55;
+    font-style: italic;
+  }
+  .phil-midwit .phil-quote {
+    color: #666;
+    font-weight: 500;
+  }
+  .phil-tail {
+    background: #FAFBFC;
+  }
+  .phil-midwit {
+    background: #ffffff;
+    border-left: 2px solid #B33030;
+    border-right: 2px solid #B33030;
   }
 
   /* Stats grid */
@@ -375,6 +442,10 @@
     .header { flex-direction: column; align-items: flex-start; gap: 16px; }
     .header-meta { text-align: left; }
     .strategy { grid-template-columns: 1fr; gap: 32px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .phil-tile { border-right: none; border-bottom: 1px solid #EEEEEE; }
+    .phil-tile:last-child { border-bottom: none; }
+    .phil-midwit { border-left: 2px solid #B33030; border-right: 2px solid #B33030; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .stat { border-right: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; }
     .stat:nth-child(2n) { border-right: none; }
@@ -427,7 +498,7 @@
       <div class="brand-sub">An AI-native fund for both tails of the IQ bell curve — top-percentile returns, zero overthinking.</div>
     </div>
     <div class="header-meta">
-      Updated April 21, 2026 · 11:37 PM PT<br>
+      Updated April 22, 2026 · 12:00 AM PT<br>
       Inception · 2026-04-14
     </div>
   </div>
@@ -446,28 +517,53 @@
     </div>
   </div>
 
+  <!-- Philosophy (bell-curve meme) -->
+  <div class="section">
+    <div class="section-label">Philosophy</div>
+    <div class="section-title">Both tails of the IQ bell curve agree.</div>
+    
+        <div class="philosophy-grid">
+            <div class="phil-tile phil-tail">
+                <div class="phil-iq">IQ 70</div>
+                <div class="phil-label">GG Capital.</div>
+                <div class="phil-quote">idk, chart go up.</div>
+            </div>
+            <div class="phil-tile phil-midwit">
+                <div class="phil-iq">IQ 100</div>
+                <div class="phil-label">The midwit</div>
+                <div class="phil-quote">THE MARKET IS ALREADY EFFICIENT!! INDEX FUNDS ARE THE OPTIMAL STRATEGY!! A ROLEX IS JUST A WATCH!!</div>
+            </div>
+            <div class="phil-tile phil-tail">
+                <div class="phil-iq">IQ 145</div>
+                <div class="phil-label">GG Capital.</div>
+                <div class="phil-quote">After decomposing 14 factors and regressing against expected returns across every credible asset class, GG Capital.</div>
+            </div>
+        </div>
+        
+  </div>
+
   <!-- Headline Stats -->
   <div class="section">
     <div class="section-label">Performance</div>
     <div class="stats-grid">
       <div class="stat">
         <div class="stat-label">Portfolio Value</div>
-        <div class="stat-value">$114,113</div>
+        <div class="stat-value">$114,283</div>
         <div class="stat-sub">$0 cash</div>
       </div>
       <div class="stat">
         <div class="stat-label">Total Return · Inception</div>
-        <div class="stat-value pos">+14.11%</div>
-        <div class="stat-sub pos">+$14,113</div>
+        <div class="stat-value pos">+14.28%</div>
+        <div class="stat-sub pos">+$14,283</div>
       </div>
       <div class="stat">
         <div class="stat-label">1-Day Return</div>
-        <div class="stat-value pos">+3.21%</div>
-        <div class="stat-sub pos">+$3,548</div>
+        <div class="stat-value pos">+3.36%</div>
+        <div class="stat-sub pos">+$3,718</div>
       </div>
       <div class="stat">
         <div class="stat-label">CAGR · Annualized</div>
-        <div class="stat-value pos">97,984%</div>
+        <div class="stat-value pos">105,910%</div>
         <div class="stat-sub">7 days of data</div>
       </div>
     </div>
@@ -490,21 +586,21 @@
       <tbody>
         <tr>
           <td><span class="bench-name">GG Capital</span> <span class="bench-tag bench-tag-us">Us</span></td>
-          <td class="right num pos">+3.21%</td>
-          <td class="right num pos">+14.11%</td>
+          <td class="right num pos">+3.36%</td>
+          <td class="right num pos">+14.28%</td>
           <td class="right num neu">—</td>
         </tr>
         <tr>
           <td><span class="bench-name">S&amp;P 500</span> <span class="bench-tag">SPY</span></td>
           <td class="right num neg">−0.65%</td>
           <td class="right num pos">+1.39%</td>
-          <td class="right num pos">+12.73%</td>
+          <td class="right num pos">+12.90%</td>
         </tr>
         <tr>
           <td><span class="bench-name">Nasdaq 100</span> <span class="bench-tag">QQQ</span></td>
           <td class="right num neg">−0.38%</td>
           <td class="right num pos">+2.50%</td>
-          <td class="right num pos">+11.61%</td>
+          <td class="right num pos">+11.78%</td>
         </tr>
       </tbody>
     </table>
@@ -513,7 +609,7 @@
   <!-- Positions -->
   <div class="section">
     <div class="section-label">Holdings</div>
-    <div class="section-title">6 positions · $114,113 invested</div>
+    <div class="section-title">6 positions · $114,283 invested</div>
     <table class="positions-table">
       <thead>
         <tr>
@@ -538,7 +634,7 @@
             <td class="right num">$96.61</td>
             <td class="right num">251</td>
             <td class="right num">$24,268</td>
-            <td class="right num">21.3%</td>
+            <td class="right num">21.2%</td>
             <td class="right num pos">+21.3%</td>
             <td class="right num pos">+2.0%</td>
             <td class="pos-desc">DigitalOcean — developer-focused cloud provider offering simple compute, storage, and managed services.</td>
@@ -548,12 +644,12 @@
             <td class="pos-ticker">HIMS</td>
             <td class="entry-date">4/14/26</td>
             <td class="right num">$23.48</td>
-            <td class="right num">$30.30</td>
+            <td class="right num">$30.34</td>
             <td class="right num">724</td>
-            <td class="right num">$21,935</td>
+            <td class="right num">$21,964</td>
             <td class="right num">19.2%</td>
-            <td class="right num pos">+29.0%</td>
-            <td class="right num pos">+1.8%</td>
+            <td class="right num pos">+29.2%</td>
+            <td class="right num pos">+1.9%</td>
             <td class="pos-desc">Hims & Hers Health — direct-to-consumer telehealth platform for personal care, mental health, and GLP-1 weight loss.</td>
         </tr>
         
@@ -561,12 +657,12 @@
             <td class="pos-ticker">SNOW</td>
             <td class="entry-date">4/14/26</td>
             <td class="right num">$136.69</td>
-            <td class="right num">$152.67</td>
+            <td class="right num">$153.18</td>
             <td class="right num">132</td>
-            <td class="right num">$20,104</td>
-            <td class="right num">17.6%</td>
-            <td class="right num pos">+11.7%</td>
-            <td class="right num pos">+1.2%</td>
+            <td class="right num">$20,171</td>
+            <td class="right num">17.7%</td>
+            <td class="right num pos">+12.1%</td>
+            <td class="right num pos">+1.6%</td>
             <td class="pos-desc">Cloud data platform enabling enterprises to store, query, and share data across AWS, Azure, and GCP.</td>
         </tr>
         
@@ -587,12 +683,12 @@
             <td class="pos-ticker">LUNR</td>
             <td class="entry-date">4/14/26</td>
             <td class="right num">$25.72</td>
-            <td class="right num">$28.56</td>
+            <td class="right num">$28.62</td>
             <td class="right num">583</td>
-            <td class="right num">$16,656</td>
+            <td class="right num">$16,691</td>
             <td class="right num">14.6%</td>
-            <td class="right num pos">+11.0%</td>
-            <td class="right num pos">+2.7%</td>
+            <td class="right num pos">+11.3%</td>
+            <td class="right num pos">+2.9%</td>
             <td class="pos-desc">Intuitive Machines — lunar exploration company providing lander services to NASA's Artemis program.</td>
         </tr>
         
@@ -600,12 +696,12 @@
             <td class="pos-ticker">LCID</td>
             <td class="entry-date">4/17/26</td>
             <td class="right num">$7.70</td>
-            <td class="right num">$7.25</td>
+            <td class="right num">$7.27</td>
             <td class="right num">1,948</td>
-            <td class="right num">$14,123</td>
+            <td class="right num">$14,162</td>
             <td class="right num">12.4%</td>
-            <td class="right num neg">−5.8%</td>
-            <td class="right num pos">+2.0%</td>
+            <td class="right num neg">−5.6%</td>
+            <td class="right num pos">+2.2%</td>
             <td class="pos-desc">Lucid Motors — luxury EV manufacturer producing the Air sedan with Saudi PIF as majority backer.</td>
         </tr>
         
@@ -617,10 +713,10 @@
           <td></td>
           <td></td>
           <td></td>
-          <td class="right num">$114,113</td>
+          <td class="right num">$114,283</td>
           <td class="right num">100.0%</td>
-          <td class="right num pos">+14.1%</td>
-          <td class="right num pos">+3.2%</td>
+          <td class="right num pos">+14.3%</td>
+          <td class="right num pos">+3.4%</td>
           <td></td>
         </tr>
       </tfoot>

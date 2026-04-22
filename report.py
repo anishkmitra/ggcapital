@@ -176,6 +176,23 @@ STRATEGY_COPY = {
         "catalyst-driven theses, and executes trades within strict risk rails — "
         "three times per trading day."
     ),
+    "philosophy": {
+        "low_iq": {
+            "iq": "IQ 70",
+            "label": "GG Capital.",
+            "quote": "idk, chart go up.",
+        },
+        "midwit": {
+            "iq": "IQ 100",
+            "label": "The midwit",
+            "quote": "THE MARKET IS ALREADY EFFICIENT!! INDEX FUNDS ARE THE OPTIMAL STRATEGY!! A ROLEX IS JUST A WATCH!!",
+        },
+        "high_iq": {
+            "iq": "IQ 145",
+            "label": "GG Capital.",
+            "quote": "After decomposing 14 factors and regressing against expected returns across every credible asset class, GG Capital.",
+        },
+    },
     "parameters": [
         ("Inception Capital", "$100,000"),
         ("Universe", "~155 US equities across 9 sectors"),
@@ -231,6 +248,36 @@ def render_dashboard(
         f'<div class="param-row"><span class="param-label">{k}</span><span class="param-value">{v}</span></div>'
         for k, v in STRATEGY_COPY["parameters"]
     )
+
+    # Philosophy: use real meme image if present, else text-based tiles
+    philosophy_img_path = Path(os.path.dirname(os.path.abspath(__file__))) / "assets" / "bell-curve.png"
+    phil = STRATEGY_COPY["philosophy"]
+    if philosophy_img_path.exists():
+        philosophy_html = f"""
+        <div class="philosophy-image">
+            <img src="assets/bell-curve.png" alt="Bell curve: GG Capital agrees at IQ 70 and IQ 145; the midwit disagrees at IQ 100.">
+        </div>
+        """
+    else:
+        philosophy_html = f"""
+        <div class="philosophy-grid">
+            <div class="phil-tile phil-tail">
+                <div class="phil-iq">{phil['low_iq']['iq']}</div>
+                <div class="phil-label">{phil['low_iq']['label']}</div>
+                <div class="phil-quote">{phil['low_iq']['quote']}</div>
+            </div>
+            <div class="phil-tile phil-midwit">
+                <div class="phil-iq">{phil['midwit']['iq']}</div>
+                <div class="phil-label">{phil['midwit']['label']}</div>
+                <div class="phil-quote">{phil['midwit']['quote']}</div>
+            </div>
+            <div class="phil-tile phil-tail">
+                <div class="phil-iq">{phil['high_iq']['iq']}</div>
+                <div class="phil-label">{phil['high_iq']['label']}</div>
+                <div class="phil-quote">{phil['high_iq']['quote']}</div>
+            </div>
+        </div>
+        """
 
     # Positions rows
     entry_dates = _get_entry_dates()
@@ -416,6 +463,73 @@ def render_dashboard(
     color: #0A0A0A;
     font-weight: 500;
     font-feature-settings: 'tnum';
+  }}
+
+  /* Philosophy section */
+  .philosophy-image {{
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    border: 1px solid #EEEEEE;
+    border-radius: 4px;
+    background: #FAFBFC;
+  }}
+  .philosophy-image img {{
+    max-width: 100%;
+    height: auto;
+    max-height: 460px;
+    border-radius: 4px;
+  }}
+  .philosophy-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 0;
+    border: 1px solid #EEEEEE;
+    border-radius: 4px;
+    overflow: hidden;
+  }}
+  .phil-tile {{
+    padding: 32px 28px;
+    border-right: 1px solid #EEEEEE;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }}
+  .phil-tile:last-child {{ border-right: none; }}
+  .phil-iq {{
+    font-size: 10px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }}
+  .phil-label {{
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0A0A0A;
+  }}
+  .phil-midwit .phil-label {{
+    color: #B33030;
+  }}
+  .phil-quote {{
+    font-size: 14px;
+    color: #333;
+    line-height: 1.55;
+    font-style: italic;
+  }}
+  .phil-midwit .phil-quote {{
+    color: #666;
+    font-weight: 500;
+  }}
+  .phil-tail {{
+    background: #FAFBFC;
+  }}
+  .phil-midwit {{
+    background: #ffffff;
+    border-left: 2px solid #B33030;
+    border-right: 2px solid #B33030;
   }}
 
   /* Stats grid */
@@ -681,6 +795,10 @@ def render_dashboard(
     .header {{ flex-direction: column; align-items: flex-start; gap: 16px; }}
     .header-meta {{ text-align: left; }}
     .strategy {{ grid-template-columns: 1fr; gap: 32px; }}
+    .philosophy-grid {{ grid-template-columns: 1fr; }}
+    .phil-tile {{ border-right: none; border-bottom: 1px solid #EEEEEE; }}
+    .phil-tile:last-child {{ border-bottom: none; }}
+    .phil-midwit {{ border-left: 2px solid #B33030; border-right: 2px solid #B33030; }}
     .stats-grid {{ grid-template-columns: repeat(2, 1fr); }}
     .stat {{ border-right: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; }}
     .stat:nth-child(2n) {{ border-right: none; }}
@@ -750,6 +868,13 @@ def render_dashboard(
         {params_html}
       </div>
     </div>
+  </div>
+
+  <!-- Philosophy (bell-curve meme) -->
+  <div class="section">
+    <div class="section-label">Philosophy</div>
+    <div class="section-title">Both tails of the IQ bell curve agree.</div>
+    {philosophy_html}
   </div>
 
   <!-- Headline Stats -->

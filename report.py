@@ -534,6 +534,24 @@ def render_dashboard(
     letter-spacing: -0.01em;
     color: #0A0A0A;
   }}
+  .positions-table tfoot tr.pos-total-row {{
+    background: #ffffff !important;
+  }}
+  .positions-table tfoot tr.pos-total-row td {{
+    border-top: 1px solid #D4D4D4;
+    border-bottom: none;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    font-weight: 600;
+    font-feature-settings: 'tnum';
+  }}
+  .positions-table tfoot tr.pos-total-row .pos-ticker {{
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #888;
+  }}
   .methodology {{
     margin-top: 16px;
     padding: 12px 16px;
@@ -668,12 +686,18 @@ def render_dashboard(
     .stat:nth-child(2n) {{ border-right: none; }}
     .stat:nth-last-child(-n+2) {{ border-bottom: none; }}
     .positions-table thead {{ display: none; }}
-    .positions-table tbody tr {{
+    .positions-table tbody tr,
+    .positions-table tfoot tr {{
       display: block;
       padding: 16px 12px;
       border-bottom: 1px solid #EEEEEE;
       background: #ffffff !important;
     }}
+    .positions-table tfoot tr.pos-total-row {{
+      border-top: 2px solid #0A0A0A;
+      margin-top: 4px;
+    }}
+    .positions-table tfoot tr td:empty {{ display: none; }}
     .positions-table tbody tr:nth-child(even) {{
       background: #FAFBFC !important;
     }}
@@ -814,6 +838,20 @@ def render_dashboard(
       <tbody>
         {pos_rows}
       </tbody>
+      <tfoot>
+        <tr class="pos-total-row">
+          <td class="pos-ticker">TOTAL</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="right num">${account['equity']:,.0f}</td>
+          <td class="right num">100.0%</td>
+          <td class="right num {pos_color(total_pct)}">{_fmt_pct_1dp(total_pct)}</td>
+          <td class="right num {pos_color(day_pct)}">{_fmt_pct_1dp(day_pct)}</td>
+          <td></td>
+        </tr>
+      </tfoot>
     </table>
     <div class="methodology">
       <strong>Total Return</strong> = (Last Price − Avg Price) ÷ Avg Price.

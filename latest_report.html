@@ -436,7 +436,7 @@
   }
   .footer a:hover { color: #5B7B9A; }
 
-  /* Responsive */
+  /* Responsive — tablet & phone */
   @media (max-width: 768px) {
     .container { padding: 32px 20px 64px; }
     .header { flex-direction: column; align-items: flex-start; gap: 16px; }
@@ -447,14 +447,55 @@
     .phil-tile:last-child { border-bottom: none; }
     .phil-midwit { border-left: 2px solid #B33030; border-right: 2px solid #B33030; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .stat { border-right: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; }
+    .stat {
+      padding: 22px 18px;
+      border-right: 1px solid #EEEEEE;
+      border-bottom: 1px solid #EEEEEE;
+    }
     .stat:nth-child(2n) { border-right: none; }
     .stat:nth-last-child(-n+2) { border-bottom: none; }
+    .stat-value { font-size: 24px; }
+
+    /* Benchmark table → card-style rows */
+    .bench-table thead { display: none; }
+    .bench-table tbody tr {
+      display: block;
+      padding: 14px 0;
+      border-bottom: 1px solid #EEEEEE;
+    }
+    .bench-table tbody tr:last-child { border-bottom: none; }
+    .bench-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+      border: none;
+      font-size: 13px;
+    }
+    .bench-table td::before {
+      color: #888;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .bench-table td:first-child {
+      display: block;
+      padding: 0 0 8px 0;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #F3F3F3;
+      font-size: 15px;
+    }
+    .bench-table td:nth-of-type(2)::before { content: "1-Day"; }
+    .bench-table td:nth-of-type(3)::before { content: "Total Return"; }
+    .bench-table td:nth-of-type(4)::before { content: "vs. GG"; }
+
+    /* Positions table → card-style rows with pseudo-labels */
     .positions-table thead { display: none; }
     .positions-table tbody tr,
     .positions-table tfoot tr {
       display: block;
-      padding: 16px 12px;
+      padding: 16px 14px;
       border-bottom: 1px solid #EEEEEE;
       background: #ffffff !important;
     }
@@ -462,28 +503,80 @@
       border-top: 2px solid #0A0A0A;
       margin-top: 4px;
     }
-    .positions-table tfoot tr td:empty { display: none; }
+    .positions-table tr td:empty { display: none; }
     .positions-table tbody tr:nth-child(even) {
       background: #FAFBFC !important;
     }
     .positions-table td {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
+      align-items: baseline;
+      padding: 5px 0;
       border: none;
       font-size: 13px;
       white-space: normal;
     }
+    .positions-table td::before {
+      color: #888;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+    .positions-table tbody td:nth-of-type(2)::before { content: "Entry"; }
+    .positions-table tbody td:nth-of-type(3)::before { content: "Avg Price"; }
+    .positions-table tbody td:nth-of-type(4)::before { content: "Last Price"; }
+    .positions-table tbody td:nth-of-type(5)::before { content: "Shares"; }
+    .positions-table tbody td:nth-of-type(6)::before { content: "Value"; }
+    .positions-table tbody td:nth-of-type(7)::before { content: "% Port."; }
+    .positions-table tbody td:nth-of-type(8)::before { content: "Total Return"; }
+    .positions-table tbody td:nth-of-type(9)::before { content: "1-Day"; }
+    .positions-table tfoot td:nth-of-type(6)::before { content: "Value"; }
+    .positions-table tfoot td:nth-of-type(7)::before { content: "% Port."; }
+    .positions-table tfoot td:nth-of-type(8)::before { content: "Total Return"; }
+    .positions-table tfoot td:nth-of-type(9)::before { content: "1-Day"; }
+    .positions-table td.pos-ticker {
+      display: block;
+      padding: 0 0 10px 0;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #F3F3F3;
+      font-size: 17px;
+    }
+    .positions-table td.pos-ticker::before { content: none; }
+    .positions-table tfoot tr.pos-total-row .pos-ticker {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+    }
     .positions-table td.pos-desc {
       display: block;
-      padding-left: 0 !important;
+      padding: 10px 0 0 0 !important;
       border-left: none;
+      border-top: 1px solid #F3F3F3;
       margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #EEEEEE;
       max-width: none;
     }
-    .trade-row { grid-template-columns: 1fr; gap: 8px; }
+    .positions-table td.pos-desc::before { content: none; }
+
+    .methodology { font-size: 11px; padding: 10px 12px; }
+    .trade-row { grid-template-columns: 1fr; gap: 8px; padding: 16px 0; }
+    .trade-line { flex-wrap: wrap; }
+    .footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+
+  /* Small phones */
+  @media (max-width: 480px) {
+    .container { padding: 24px 16px 48px; }
+    .brand { font-size: 22px; }
+    .brand-sub { font-size: 12px; }
+    .section { margin-bottom: 48px; }
+    .section-title { font-size: 17px; }
+    .stat-value { font-size: 20px; }
+    .stat { padding: 18px 14px; }
+    .phil-tile { padding: 24px 20px; }
+    .phil-label { font-size: 17px; }
+    .phil-quote { font-size: 13px; }
   }
 </style>
 </head>

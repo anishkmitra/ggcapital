@@ -207,6 +207,52 @@ STRATEGY_COPY = {
         ("Trade cadence", "3× daily (Mon-Fri)"),
     ],
     "goal": "Target: Significantly outperform SPY and QQQ on a post-fee, pre-tax basis regardless of market backdrop.",
+    "schedule_intro": (
+        "Three times per trading day (Mon–Fri), the agent wakes up, reads the market, "
+        "and decides what to buy, sell, or hold — bounded by risk rails it cannot override. "
+        "Every run regenerates this dashboard."
+    ),
+    "schedule": [
+        {
+            "time": "9:45 AM ET",
+            "tag": "Post-Open",
+            "title": "Analyze & Trade",
+            "body": (
+                "After morning noise has settled, the agent runs a 6-step playbook: "
+                "(1) form a macro view and pick sector overweights; "
+                "(2) pull the 3–5 highest-scoring names from the screener; "
+                "(3) if options exposure is below 20%, add OTM calls, spreads, or straddles "
+                "(5–10% per play); "
+                "(4) hunt earnings plays on high-beta names with divided analyst consensus; "
+                "(5) verify no sector is over the 35% cap; "
+                "(6) execute the highest-conviction trades with a written thesis, "
+                "conviction score (1–10), and catalyst timeline."
+            ),
+        },
+        {
+            "time": "12:30 PM ET",
+            "tag": "Midday",
+            "title": "Analyze & Trade",
+            "body": (
+                "Same 6-step prompt as the morning run. The agent reassesses the macro "
+                "tape, looks for fresh momentum shifts and intraday setups, and may add "
+                "new positions — or do nothing if no idea clears the conviction bar."
+            ),
+        },
+        {
+            "time": "3:30 PM ET",
+            "tag": "Pre-Close",
+            "title": "Position Review",
+            "body": (
+                "30 minutes before the bell. No new entries — only management of the book: "
+                "(1) sell any stock up 50%+; "
+                "(2) cut any option down 80%+ on premium; "
+                "(3) reassess each position's original thesis (exit if broken, regardless of P&L); "
+                "(4) check sector drift; "
+                "(5) flag upcoming earnings on holdings."
+            ),
+        },
+    ],
 }
 
 
@@ -258,6 +304,18 @@ def render_dashboard(
     params_html = "".join(
         f'<div class="param-row"><span class="param-label">{k}</span><span class="param-value">{v}</span></div>'
         for k, v in STRATEGY_COPY["parameters"]
+    )
+
+    # Schedule tiles for the "Details" section
+    schedule_tiles_html = "".join(
+        f"""
+        <div class="schedule-tile">
+            <div class="schedule-time">{_e(slot['time'])} <span class="schedule-tag">{_e(slot['tag'])}</span></div>
+            <div class="schedule-title">{_e(slot['title'])}</div>
+            <div class="schedule-body">{_e(slot['body'])}</div>
+        </div>
+        """
+        for slot in STRATEGY_COPY["schedule"]
     )
 
     # Philosophy: use real meme image if present, else text-based tiles
@@ -543,6 +601,71 @@ def render_dashboard(
     border-right: 2px solid #B33030;
   }}
 
+  /* Details / Schedule section */
+  .schedule-intro {{
+    font-size: 14px;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    max-width: 760px;
+  }}
+  .schedule-grid {{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid #EEEEEE;
+    border-radius: 4px;
+    overflow: hidden;
+  }}
+  .schedule-tile {{
+    padding: 28px 28px;
+    border-right: 1px solid #EEEEEE;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #FAFBFC;
+  }}
+  .schedule-tile:last-child {{ border-right: none; }}
+  .schedule-tile:nth-child(2) {{ background: #ffffff; }}
+  .schedule-time {{
+    font-size: 11px;
+    font-weight: 600;
+    color: #5B7B9A;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-feature-settings: 'tnum';
+  }}
+  .schedule-tag {{
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 6px;
+    background: #EEEEEE;
+    color: #666;
+    border-radius: 3px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }}
+  .schedule-title {{
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #0A0A0A;
+  }}
+  .schedule-body {{
+    font-size: 13px;
+    color: #444;
+    line-height: 1.65;
+  }}
+  .schedule-footnote {{
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #FAFBFC;
+    border-left: 2px solid #5B7B9A;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+  }}
+
   /* Stats grid */
   .stats-grid {{
     display: grid;
@@ -810,6 +933,9 @@ def render_dashboard(
     .phil-tile {{ border-right: none; border-bottom: 1px solid #EEEEEE; }}
     .phil-tile:last-child {{ border-bottom: none; }}
     .phil-midwit {{ border-left: 2px solid #B33030; border-right: 2px solid #B33030; }}
+    .schedule-grid {{ grid-template-columns: 1fr; }}
+    .schedule-tile {{ border-right: none; border-bottom: 1px solid #EEEEEE; padding: 22px 20px; }}
+    .schedule-tile:last-child {{ border-bottom: none; }}
     .stats-grid {{ grid-template-columns: repeat(2, 1fr); }}
     .stat {{
       padding: 22px 18px;
@@ -979,6 +1105,21 @@ def render_dashboard(
     <div class="section-label">Philosophy</div>
     <div class="section-title">Both tails of the IQ bell curve agree.</div>
     {philosophy_html}
+  </div>
+
+  <!-- Details (daily schedule + automation) -->
+  <div class="section">
+    <div class="section-label">Details</div>
+    <div class="section-title">How the agent runs</div>
+    <div class="schedule-intro">{STRATEGY_COPY['schedule_intro']}</div>
+    <div class="schedule-grid">
+      {schedule_tiles_html}
+    </div>
+    <div class="schedule-footnote">
+      <strong>Hard rails (cannot be overridden):</strong> max 20% per position, 35% per sector,
+      40% total options exposure, 10% per single options play. No margin, no naked options, no shorts.
+      Options stop-loss at 80% loss of premium.
+    </div>
   </div>
 
   <!-- Headline Stats -->

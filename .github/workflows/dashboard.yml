@@ -1,0 +1,150 @@
+# GG Capital — agent run + dashboard publish + EOD digest
+#
+# Replaces the laptop cron in run.sh. Runs in GitHub's cloud regardless of
+# whether your Mac is on. Three scheduled slots Mon-Fri (per STRATEGY_OVERVIEW.md)
+# plus a manual "Run workflow" button on the Actions tab for on-demand refreshes.
+#
+# Required GitHub Secrets (Settings → Secrets and variables → Actions → New repository secret):
+#   ALPACA_API_KEY        — Alpaca paper or live API key
+#   ALPACA_SECRET_KEY     — Alpaca secret
+#   ANTHROPIC_API_KEY     — for the agent + the email digest commentary
+#   GMAIL_ADDRESS         — sender (also recipient — the script emails itself)
+#   GMAIL_APP_PASSWORD    — Gmail app password (NOT your Google account password)
+#   TRADING_MODE          — "paper" or "live" (defaults to "paper" if unset)
+#
+# Permissions: this workflow needs `contents: write` to push the auto-generated
+# `latest_report.html` back to main. That's set on the job below.
+
+name: Dashboard
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'What to run'
+        required: true
+        default: 'analyze'
+        type: choice
+        options:
+          - analyze
+          - review
+          - scan
+      send_digest:
+        description: 'Send email digest after run'
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    # GitHub Actions cron is fixed UTC. We list both EDT (Mar-Nov, UTC-4) and
+    # EST (Nov-Mar, UTC-5) times — the workflow checks current ET and skips
+    # the off-DST schedule each day. Net: still 3 real runs per trading day.
+    - cron: '45 13 * * 1-5'   #  9:45 AM ET (EDT) — Analyze
+    - cron: '45 14 * * 1-5'   #  9:45 AM ET (EST) — Analyze
+    - cron: '30 16 * * 1-5'   # 12:30 PM ET (EDT) — Analyze
+    - cron: '30 17 * * 1-5'   # 12:30 PM ET (EST) — Analyze
+    - cron: '30 19 * * 1-5'   #  3:30 PM ET (EDT) — Review + email digest
+    - cron: '30 20 * * 1-5'   #  3:30 PM ET (EST) — Review + email digest
+
+# Don't pile up if a prior run is still going — cancel it.
+concurrency:
+  group: dashboard-main
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      TRADING_MODE: ${{ secrets.TRADING_MODE || 'paper' }}
+      GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Determine slot (mode + DST short-circuit)
+        id: slot
+        env:
+          INPUT_MODE: ${{ inputs.mode }}
+          INPUT_SEND_DIGEST: ${{ inputs.send_digest }}
+        run: |
+          python <<'PY' >> "$GITHUB_OUTPUT"
+          import os
+          import sys
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          if os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch":
+              mode = os.environ.get("INPUT_MODE") or "analyze"
+              send = (os.environ.get("INPUT_SEND_DIGEST") or "false").lower()
+              print(f"mode={mode}")
+              print(f"send_digest={send}")
+              print("run=true")
+              sys.exit(0)
+
+          now_et = datetime.now(ZoneInfo("America/New_York"))
+
+          def near(target_h: int, target_m: int) -> bool:
+              return now_et.hour == target_h and abs(now_et.minute - target_m) <= 2
+
+          mode = None
+          send = "false"
+          if near(9, 45):
+              mode, send = "analyze", "false"
+          elif near(12, 30):
+              mode, send = "analyze", "false"
+          elif near(15, 30):
+              mode, send = "review", "true"
+
+          if mode is None:
+              print(
+                  f"Outside scheduled ET slot ({now_et:%H:%M ET}, DST={bool(now_et.dst())}) — skipping.",
+                  file=sys.stderr,
+              )
+              print("mode=analyze")
+              print("send_digest=false")
+              print("run=false")
+          else:
+              print(f"mode={mode}")
+              print(f"send_digest={send}")
+              print("run=true")
+          PY
+
+      - name: Run agent
+        if: steps.slot.outputs.run == 'true'
+        run: python main.py "${{ steps.slot.outputs.mode }}"
+
+      - name: Regenerate dashboard
+        if: steps.slot.outputs.run == 'true'
+        run: python report.py
+
+      - name: Send email digest
+        if: steps.slot.outputs.run == 'true' && steps.slot.outputs.send_digest == 'true'
+        run: python emailer.py
+
+      - name: Commit and push dashboard
+        if: steps.slot.outputs.run == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add latest_report.html
+          if git diff --cached --quiet; then
+            echo "No dashboard changes to publish."
+          else
+            git commit -m "Auto-update dashboard — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push origin HEAD:main
+          fi

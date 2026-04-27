@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'), override=True)
 
-from report import generate_report
+from digest import generate_digest
 
 
 def send_report():
@@ -22,7 +22,7 @@ def send_report():
         print("ERROR: GMAIL_ADDRESS or GMAIL_APP_PASSWORD not set in .env")
         return False
 
-    subject, html_body = generate_report()
+    subject, html_body = generate_digest()
 
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject

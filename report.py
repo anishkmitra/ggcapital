@@ -186,7 +186,7 @@ STRATEGY_COPY = {
         "midwit": {
             "iq": "IQ 100",
             "label": "The midwit",
-            "quote": "THE MARKET IS ALREADY EFFICIENT!! INDEX FUNDS ARE THE OPTIMAL STRATEGY!! A ROLEX IS JUST A WATCH!!",
+            "quote": "Just because I trust AI with all of my sensitive data + Gmail does NOT mean I'd trust it with my money! Why would I care about returns when I have a solid Sharpe ratio?",
         },
         "high_iq": {
             "iq": "IQ 145",

@@ -12,6 +12,13 @@
 #   GMAIL_APP_PASSWORD    — Gmail app password (NOT your Google account password)
 #   TRADING_MODE          — "paper" or "live" (defaults to "paper" if unset)
 #
+# Optional (recommended) secrets — used by the direct-deploy step that bypasses
+# the GitHub→Vercel git integration. With these set, the dashboard refreshes on
+# Vercel even if pushing to `main` is blocked (branch protection, race, etc.):
+#   VERCEL_TOKEN          — Vercel personal access token (Account → Tokens)
+#   VERCEL_ORG_ID         — from .vercel/project.json after `vercel link`
+#   VERCEL_PROJECT_ID     — from .vercel/project.json after `vercel link`
+#
 # Permissions: this workflow needs `contents: write` to push the auto-generated
 # `latest_report.html` back to main. That's set on the job below.
 
@@ -62,9 +69,16 @@ jobs:
       TRADING_MODE: ${{ secrets.TRADING_MODE || 'paper' }}
       GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
 
       - uses: actions/setup-python@v5
         with:
@@ -132,19 +146,76 @@ jobs:
         if: steps.slot.outputs.run == 'true'
         run: python report.py
 
+      # Publish FIRST, email SECOND. If publish fails the run goes red and
+      # we don't send a digest claiming the site is fresh when it isn't.
+
+      - name: Deploy dashboard to Vercel (direct, primary)
+        id: vercel_deploy
+        if: steps.slot.outputs.run == 'true' && env.VERCEL_TOKEN != ''
+        run: |
+          set -euo pipefail
+          npm install --global vercel@latest
+          # Pull project settings (writes .vercel/ in CWD using ORG_ID + PROJECT_ID env vars).
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          DEPLOY_URL=$(vercel deploy --prebuilt=false --prod --yes --token="$VERCEL_TOKEN")
+          echo "Deployed to: $DEPLOY_URL"
+          echo "url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+          echo "::notice::Dashboard deployed directly to Vercel: $DEPLOY_URL"
+
+      - name: Warn if Vercel direct-deploy is not configured
+        if: steps.slot.outputs.run == 'true' && env.VERCEL_TOKEN == ''
+        run: |
+          echo "::warning::VERCEL_TOKEN secret not set — falling back to git-push-to-main only."
+          echo "::warning::If main is protected, the live site will not refresh until you add VERCEL_TOKEN/VERCEL_ORG_ID/VERCEL_PROJECT_ID secrets."
+
+      - name: Commit and push dashboard (archival, race-resilient)
+        if: steps.slot.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          # Don't let the .vercel/ scratch dir from the deploy step leak into the commit.
+          git add latest_report.html
+
+          if git diff --cached --quiet; then
+            echo "::notice::latest_report.html unchanged — nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "Auto-update dashboard — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          # Retry up to 3 times with rebase-on-conflict. Handles the case where
+          # another scheduled run (or a manual edit) lands on main between our
+          # checkout and our push.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "::notice::Pushed dashboard commit to main on attempt ${attempt}."
+              exit 0
+            fi
+            echo "::warning::git push attempt ${attempt}/3 failed. Fetching + rebasing..."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::error::Rebase onto origin/main produced conflicts. Aborting."
+              git rebase --abort || true
+              break
+            fi
+            sleep $((attempt * 2))
+          done
+
+          echo "::error::Could not push latest_report.html to main after 3 attempts."
+          echo "::error::Most likely causes (in order):"
+          echo "::error::  1. Branch protection on 'main' blocks bot pushes — open Settings → Branches and either disable 'Require a pull request before merging' for main, or add github-actions[bot] to the bypass list."
+          echo "::error::  2. GITHUB_TOKEN scoping changed — confirm Settings → Actions → General → Workflow permissions = 'Read and write'."
+          echo "::error::  3. Repository-level Actions permission revoked."
+          # Don't fail the whole run if the Vercel direct-deploy already succeeded —
+          # the user-visible site is fresh; the git archive can catch up next run.
+          if [ "${{ steps.vercel_deploy.outcome }}" = "success" ]; then
+            echo "::warning::Vercel direct-deploy already published this run; treating git-push failure as non-fatal."
+            exit 0
+          fi
+          exit 1
+
       - name: Send email digest
         if: steps.slot.outputs.run == 'true' && steps.slot.outputs.send_digest == 'true'
         run: python emailer.py
-
-      - name: Commit and push dashboard
-        if: steps.slot.outputs.run == 'true'
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add latest_report.html
-          if git diff --cached --quiet; then
-            echo "No dashboard changes to publish."
-          else
-            git commit -m "Auto-update dashboard — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            git push origin HEAD:main
-          fi
